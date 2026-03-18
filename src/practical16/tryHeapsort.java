@@ -112,4 +112,31 @@ public class tryHeapsort {
         return D.keySet().toArray(new String[0]);
     }
 
+    //Timing helper: runs the sort REPS times and returns avg ms
+
+    static final int REPS = 5;
+
+    static double timeBottomUp(String[] words) {
+        long total = 0;
+        String[] sorted = null;
+        for (int r = 0; r < REPS; r++) {
+            long start = System.nanoTime();
+            buildHeapBottomUp(words);
+            sorted = heapSort(words.length);
+            total += System.nanoTime() - start;
+        }
+        return total / (double) REPS / 1_000_000.0; //ms
+    }
+
+    static double timeTopDown(String[] words) {
+        long total = 0;
+        for (int r = 0; r < REPS; r++) {
+            long start = System.nanoTime();
+            buildHeapTopDown(words);
+            heapSort(words.length);
+            total += System.nanoTime() - start;
+        }
+        return total / (double) REPS / 1_000_000.0; //ms
+    }
+
     
