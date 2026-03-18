@@ -60,3 +60,20 @@ public class tryHeapsort {
             siftDown(i, n);
         }
     }
+
+    //(b)Top down heap construction
+    //Insert words one by one, sifting each up.
+   
+    static void buildHeapTopDown(String[] words) {
+        int n = words.length;
+        heap = new String[n + 1]; //1 based
+        heapSize = 0;
+
+        for (String w : words) {
+            heapSize++;
+            heap[heapSize] = w;
+            siftUp(heapSize);
+        }
+    }
+
+    
