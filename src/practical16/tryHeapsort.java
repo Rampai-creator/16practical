@@ -76,4 +76,40 @@ public class tryHeapsort {
         }
     }
 
+     
+    //Heap sort 
+    //Repeatedly extract the minimum (root) into a result array.
+    //After each extraction shrink the heap and sift down.
+  
+    static String[] heapSort(int n) {
+        String[] sorted = new String[n];
+        int remaining = n;
+        for (int k = 0; k < n; k++) {
+            sorted[k] = heap[1]; //min = root
+            heap[1] = heap[remaining]; //move last to root
+            remaining--;
+            if (remaining > 0) siftDown(1, remaining);
+        }
+        return sorted;
+    }
+
+    //File reading
+    
+    static String[] readWords(String filename) throws IOException {
+        HashMap<String, Integer> D = new HashMap<>();
+        BufferedReader reader = new BufferedReader(
+            new InputStreamReader(new FileInputStream(filename), "ISO-8859-1"));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            for (String w : line.split("\\s+")) {
+                if (w.isEmpty()) continue;
+                w = w.replaceAll("^[^a-zA-Z']+|[^a-zA-Z']+$", "").toLowerCase();
+                if (w.isEmpty()) continue;
+                D.put(w, D.getOrDefault(w, 0) + 1);
+            }
+        }
+        reader.close();
+        return D.keySet().toArray(new String[0]);
+    }
+
     
