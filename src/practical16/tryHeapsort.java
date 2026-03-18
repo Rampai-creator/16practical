@@ -149,5 +149,63 @@ public class tryHeapsort {
         return true;
     }
 
+    
+    //Main method
+    
+    public static void main(String[] args) throws IOException {
+
+        //SMALL TEST (≤ 20 words)
+        System.out.println(" SMALL TEST (20 words)");
+
+        String[] sample = {
+            "zebra", "apple", "mango", "cherry", "date",
+            "elderberry", "fig", "grape", "honeydew", "kiwi",
+            "lemon", "melon", "nectarine", "orange", "papaya",
+            "quince", "raspberry", "strawberry", "tangerine", "ugli"
+        };
+
+        System.out.println("Original : " + Arrays.toString(sample));
+
+        buildHeapBottomUp(sample.clone());
+        String[] sortedBU = heapSort(sample.length);
+        System.out.println("Bottom-up: " + Arrays.toString(sortedBU));
+        System.out.println("Sorted? " + isSorted(sortedBU));
+
+        buildHeapTopDown(sample.clone());
+        String[] sortedTD = heapSort(sample.length);
+        System.out.println("Top-down : " + Arrays.toString(sortedTD));
+        System.out.println("Sorted? " + isSorted(sortedTD));
+
+        //LARGE TEST (Ulysses)
+        System.out.println();
+        System.out.println(" LARGE TEST (Ulysses words)");
+
+        //Locating ulysses.text (same directory flexibility as Practical 15)
+        String[] candidates = {
+            "ulysses.text",
+            "src/practical16/ulysses.text",
+            "src/practical15/ulysses.text"
+        };
+        String filename = null;
+        for (String c : candidates) {
+            if (new File(c).exists()) { filename = c; break; }
+        }
+        if (filename == null) {
+            //Fallback: search relative to class location
+            filename = tryHeapsort.class
+                .getProtectionDomain().getCodeSource().getLocation()
+                .getPath().replaceAll("out/.*", "") + "src/practical16/ulysses.text";
+        }
+
+        String[] words;
+        try {
+            words = readWords(filename);
+        } catch (FileNotFoundException e) {
+            System.out.println("ulysses.text not found. Tried: " + Arrays.toString(candidates));
+            System.out.println("Place ulysses.text next to tryHeapsort.java and re-run.");
+            return;
+        }
+
+
 
     
