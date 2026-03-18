@@ -139,4 +139,15 @@ public class tryHeapsort {
         return total / (double) REPS / 1_000_000.0; //ms
     }
 
+     
+    //Verify a sorted array is in non decreasing order
+
+    static boolean isSorted(String[] a) {
+        for (int i = 1; i < a.length; i++) {
+            if (a[i - 1].compareTo(a[i]) > 0) return false;
+        }
+        return true;
+    }
+
+
     
