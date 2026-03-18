@@ -11,8 +11,8 @@ public class tryHeapsort {
     //MIN-HEAP backed by a String array (alphabetical order)
     //Index 1based: root at index 1, children of i at 2i and 2i+1
 
-    static String[] heap;
-    static int heapSize;
+    static String[] heap; //The heap array
+    static int heapSize; //How many elements are currenytly in the heap
 
     //Utility helpers
 
@@ -23,24 +23,24 @@ public class tryHeapsort {
     //Restore heap property downward from position i
     static void siftDown(int i, int n) {
         while (true) {
-            int smallest = i;
-            int left = 2 * i;
-            int right = 2 * i + 1;
+            int smallest = i; //Assume current node is smallest
+            int left = 2 * i; //Left child index
+            int right = 2 * i + 1; //right child index
             if (left <= n && heap[left ].compareTo(heap[smallest]) < 0) smallest = left;
             if (right <= n && heap[right].compareTo(heap[smallest]) < 0) smallest = right;
-            if (smallest == i) break;
-            swap(heap, i, smallest);
+            if (smallest == i) break; //If no swap needed
+            swap(heap, i, smallest); //swap current node
             i = smallest;
         }
     }
 
     //Restore heap property upward from position i (used in top-down insert)
     static void siftUp(int i) {
-        while (i > 1) {
-            int parent = i / 2;
+        while (i > 1) {           //Stop at root (index 1)
+            int parent = i / 2; //Parent index
             if (heap[parent].compareTo(heap[i]) > 0) {
                 swap(heap, parent, i);
-                i = parent;
+                i = parent; //Continue checking upward
             } else {
                 break;
             }
@@ -67,12 +67,12 @@ public class tryHeapsort {
     static void buildHeapTopDown(String[] words) {
         int n = words.length;
         heap = new String[n + 1]; //1 based
-        heapSize = 0;
+        heapSize = 0; //Starting with empty heap
 
         for (String w : words) {
-            heapSize++;
-            heap[heapSize] = w;
-            siftUp(heapSize);
+            heapSize++; //Expand heap by one slot
+            heap[heapSize] = w; //place new word at the end
+            siftUp(heapSize); //bubble it up to the right position
         }
     }
 
@@ -82,12 +82,12 @@ public class tryHeapsort {
     //After each extraction shrink the heap and sift down.
   
     static String[] heapSort(int n) {
-        String[] sorted = new String[n];
-        int remaining = n;
+        String[] sorted = new String[n]; //Will hold sorted words
+        int remaining = n; //Tracks current heap boundary 
         for (int k = 0; k < n; k++) {
             sorted[k] = heap[1]; //min = root
             heap[1] = heap[remaining]; //move last to root
-            remaining--;
+            remaining--; //Shrink heap by one
             if (remaining > 0) siftDown(1, remaining);
         }
         return sorted;
@@ -103,13 +103,13 @@ public class tryHeapsort {
         while ((line = reader.readLine()) != null) {
             for (String w : line.split("\\s+")) {
                 if (w.isEmpty()) continue;
-                w = w.replaceAll("^[^a-zA-Z']+|[^a-zA-Z']+$", "").toLowerCase();
+                w = w.replaceAll("^[^a-zA-Z']+|[^a-zA-Z']+$", "").toLowerCase(); //Remove leading and trailing nonletter characters
                 if (w.isEmpty()) continue;
                 D.put(w, D.getOrDefault(w, 0) + 1);
             }
         }
         reader.close();
-        return D.keySet().toArray(new String[0]);
+        return D.keySet().toArray(new String[0]); //Return just the unique words as a plain array
     }
 
     //Timing helper: runs the sort REPS times and returns avg ms
@@ -150,7 +150,7 @@ public class tryHeapsort {
     }
 
     
-    //Main method
+    //Main method and Displaying the results
     
     public static void main(String[] args) throws IOException {
 
@@ -205,6 +205,47 @@ public class tryHeapsort {
             System.out.println("Place ulysses.text next to tryHeapsort.java and re-run.");
             return;
         }
+        
+        System.out.println("Unique words loaded: " + words.length);
+        System.out.println("Running " + REPS + " timed repetitions each...");
+        System.out.println();
+
+        //Time bottom up
+        double avgBU = timeBottomUp(words);
+        //Produce final sorted output for verification
+        buildHeapBottomUp(words);
+        String[] finalBU = heapSort(words.length);
+
+        //Time top down
+        double avgTD = timeTopDown(words);
+        buildHeapTopDown(words);
+        String[] finalTD = heapSort(words.length);
+
+        System.out.println("Bottom-up build + sort: " + String.format("%.3f ms", avgBU));
+        System.out.println("Top-down build + sort: " + String.format("%.3f ms", avgTD));
+        System.out.println();
+        System.out.println("Bottom-up result sorted? " + isSorted(finalBU));
+        System.out.println("Top-down result sorted? " + isSorted(finalTD));
+        System.out.println();
+
+        //Print first 20 sorted words as a sanity check
+        System.out.println("First 20 sorted words (bottom-up):");
+        for (int i = 0; i < 20 && i < finalBU.length; i++) {
+            System.out.println(" " + (i + 1) + ". " + finalBU[i]);
+        }
+
+        System.out.println();
+        System.out.println(" TIMING SUMMARY");
+        System.out.printf(" Bottom-up heapsort : %8.3f ms (avg over %d runs)%n", avgBU, REPS);
+        System.out.printf(" Top-down heapsort : %8.3f ms (avg over %d runs)%n", avgTD, REPS);
+        double diff = avgTD - avgBU;
+        if (diff > 0)
+            System.out.printf(" Top-down is %.3f ms SLOWER than bottom-up%n", diff);
+        else
+            System.out.printf(" Top-down is %.3f ms FASTER than bottom-up%n", -diff);
+    
+    }
+}
 
 
 
